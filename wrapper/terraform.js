@@ -42,6 +42,13 @@ async function checkTerraform () {
   // TODO: remove
   core.setCommandEcho(true);
 
+  const failOnDetectedDiffInput = core.getBooleanInput('fail_on_detected_diff');
+  if (failOnDetectedDiffInput) {
+    core.debug('fail_on_detected_diff=true: Setting -detailed-exitcode flag -- IGNORED FORCE TO TRUE ');
+    args.push('-detailed-exitcode');
+  }
+
+  // execute Terraform, with additional args and grab the output
   const exitCode = await exec(pathToCLI, args, options);
 
   // Pass-through stdout/err as `exec` won't due to `silent: true` option
@@ -72,12 +79,12 @@ async function checkTerraform () {
   if (exitCode === 2) {
     const is_wrapper = core.getInput('terraform_wrapper')
     const terraform_version = core.getInput('terraform_version');
-    const failOnDetectedDiffString = core.getInput('fail_on_detected_diff');
-    // const failOnDetectedDiff = core.getBooleanInput('fail_on_detected_diff');
+    // const failOnDetectedDiffString = core.getInput('fail_on_detected_diff');
+    var failOnDetectedDiff = true;
 //#    getInput('my-input').toUpper() === 'true'
 
     ///////////////////////////////
-    failOnDetectedDiff = (failOnDetectedDiffString.toLowerCase() === 'fail');
+    // failOnDetectedDiff = (failOnDetectedDiffString.toLowerCase() === 'fail');
     failOnDetectedDiff = true;
     core.info(`FORCING fail_on_detected_diff. Fix later when you can.`); // TODO: fix issue and remove override
     //////////////////////////////
